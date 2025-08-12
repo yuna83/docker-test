@@ -1,0 +1,12 @@
+## stage1
+FROM golang:1.15-alpine3.12 AS gobuilder-stage
+MAINTAINER "yyn <yyn83@sample>"
+LABEL "purpose"="Application deployment using Multi-stage builds."
+WORKDIR /app
+COPY gostart.go .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app/gostart
+
+## stage2
+FROM scratch
+COPY --from=gobuilder-stage /app/gostart /app/gostart
+CMD ["/app/gostart"]
